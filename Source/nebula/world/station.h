@@ -11,24 +11,17 @@ class NEBULA_API Astation : public APawn
 {
 	GENERATED_BODY()
 
-public:
-	// Sets default values for this pawn's properties
+public:	
 	Astation();
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-public:	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		TSubclassOf<UStaticMesh> bp_mesh_station_ = nullptr;
-
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+protected:
+	virtual void BeginPlay() override;
 	
-	
+private:
+	class UClass* station_hud_ = nullptr;
+	class UWidgetComponent* station_name_ = nullptr;
 };

@@ -21,7 +21,7 @@ class NEBULA_API Aplayer_controller : public APlayerController
 public:
 	// BP
 	UPROPERTY(Replicated)
-		class Aplayer_state* player_state_ = nullptr;
+		class Aplayer_state* player_state = nullptr;
 
 	UPROPERTY(ReplicatedUsing = on_connect)
 		bool connected = false;

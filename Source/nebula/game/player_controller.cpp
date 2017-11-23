@@ -16,7 +16,7 @@ void Aplayer_controller::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(Aplayer_controller, connected);
-	DOREPLIFETIME(Aplayer_controller, player_state_);
+	DOREPLIFETIME(Aplayer_controller, player_state);
 }
 
 void Aplayer_controller::BeginPlay()

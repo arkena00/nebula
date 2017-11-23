@@ -17,7 +17,7 @@ void Agame_mode::BeginPlay()
 
 	nb_log("Agame_mode::BeginPlay()");
 	// spawn universe
-	GetWorld()->SpawnActor<Auniverse>();
+	//GetWorld()->SpawnActor<Auniverse>();
 }
 
 void Agame_mode::PreLogin(const FString & Options, const FString & Address, const FUniqueNetIdRepl & UniqueId, FString & ErrorMessage)
@@ -45,16 +45,17 @@ FString Agame_mode::InitNewPlayer(APlayerController* new_player_controller, cons
 		auto pc = Cast<Aplayer_controller>(new_player_controller);
 
 		// create player state
-		pc->player_state_ = GetWorld()->SpawnActor<Aplayer_state>();
-		pc->player_state_->SetOwner(pc);
-		pc->player_state_->name_ = id;
+		pc->player_state = GetWorld()->SpawnActor<Aplayer_state>();
+		pc->player_state->SetOwner(pc);
+		pc->player_state->name_ = "ads00";
 
 		player_list_.Add(pc);
 
 		pc->connected = true;
 
 		//auto station = GetWorld()->SpawnActor<Astation>();
-		GetWorld()->SpawnActor<Astation>(FVector(100, 100, 100), FRotator(0, 0, 0));
+		if (id == "1") { GetWorld()->SpawnActor<Astation>(FVector(0, 0, 0), FRotator{}); }
+		else GetWorld()->SpawnActor<Astation>(FVector(10000, 10000, 0), FRotator{});
 		//pc->Possess(station);
 	}
 

@@ -10,7 +10,7 @@ Astar::Astar()
 	auto root = CreateDefaultSubobject<USceneComponent>(TEXT("root"));
 	RootComponent = root;
 
-	auto star_mesh_ = ConstructorHelpers::FObjectFinderOptional<UStaticMesh>(TEXT("/Game/nebula/model/star/mesh_star.mesh_star")).Get();
+	auto star_mesh_ = ConstructorHelpers::FObjectFinderOptional<UStaticMesh>(TEXT("/Game/nebula/world/star/mesh_star.mesh_star")).Get();
 	auto star_mat_ = ConstructorHelpers::FObjectFinderOptional<UMaterial>(TEXT("/Game/nebula/material/star.star")).Get();
 	UStaticMeshComponent* star = NewObject<UStaticMeshComponent>(this, TEXT("mesh"));
 
