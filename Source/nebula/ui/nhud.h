@@ -16,9 +16,14 @@ class NEBULA_API Anhud : public AHUD
 
 	virtual void BeginPlay() override;
 
-	class Umain* main_ = nullptr;
+	class Umain* game_ui_ = nullptr;
+	class UUserWidget* ship_ui_ = nullptr;
 	
 public:
+	void ship_ui();
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		TSubclassOf<class Umain> bp_main_ = nullptr;
+		TSubclassOf<class Umain> bp_game_ui_ = nullptr;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TSubclassOf<class UUserWidget> bp_ship_ui_ = nullptr;
 };

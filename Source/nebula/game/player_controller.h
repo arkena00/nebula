@@ -6,10 +6,6 @@
 #include "GameFramework/PlayerController.h"
 #include "player_controller.generated.h"
 
-
-/**
- * 
- */
 UCLASS()
 class NEBULA_API Aplayer_controller : public APlayerController
 {
@@ -23,15 +19,24 @@ public:
 	UPROPERTY(Replicated)
 		class Aplayer_state* player_state = nullptr;
 
-	UPROPERTY(ReplicatedUsing = on_connect)
-		bool connected = false;
+	UFUNCTION(Server, reliable, WithValidation)
+		void server_control(int ship_id);
 
 	UFUNCTION(Client, reliable)
-		void test();
+		void client_on_control(Aship* ship);
 
 	UFUNCTION()
 		void on_connect();
 
 	// input
 	void input_test();
+
+	// action
+	void control(class Aship*);
+
+	void ship_add(class Aship*);
+
+private:
+	UPROPERTY(Replicated)
+	TArray<class Aship*> ship_list_;
 };

@@ -11,8 +11,6 @@ class NEBULA_API Agame_mode : public AGameModeBase
 {
 	GENERATED_BODY()
 
-	TArray<class Aplayer_controller*> player_list_;
-
 protected:
 	virtual void BeginPlay() override;
 
@@ -20,5 +18,9 @@ protected:
 	virtual void PostLogin(APlayerController* NewPlayer) override;
 
 	virtual FString InitNewPlayer(APlayerController* NewPlayerController, const FUniqueNetIdRepl& UniqueId, const FString& Options, const FString& Portal) override;
-	
+
+private:
+	Agame_mode();
+
+	TArray<class Aplayer_controller*> player_list_;
 };

@@ -7,17 +7,22 @@ public class nebula : ModuleRules
 	public nebula(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
-	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "UMG", "Slate", "SlateCore" });
 
-		PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore", "Http", "Json", "JsonUtilities" });
+        PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "UMG" });
+        PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore", "Http", "Json", "JsonUtilities" });
 
-		// Uncomment if you are using Slate UI
-		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
-		
-		// Uncomment if you are using online features
-		// PrivateDependencyModuleNames.Add("OnlineSubsystem");
+        // ndb
+        string ndb_path = "C:/Projet/nk/ndb";
 
-		// To include OnlineSubsystemSteam, add it to the plugins section in your uproject file with the Enabled attribute set to true
-	}
+        PublicIncludePaths.Add(ndb_path + "/include");
+        PublicIncludePaths.Add(ndb_path + "/extlib/include/libmongoc-1.0");
+        PublicIncludePaths.Add(ndb_path + "/extlib/include/libbson-1.0");
+        PublicAdditionalLibraries.Add(ndb_path + "/extlib/lib/mongoc-static-1.0.lib");
+        PublicAdditionalLibraries.Add(ndb_path + "/extlib/lib/bson-static-1.0.lib");
+
+        PublicAdditionalLibraries.Add("ws2_32.lib");
+        PublicAdditionalLibraries.Add("Secur32.lib");
+        PublicAdditionalLibraries.Add("Crypt32.lib");
+        PublicAdditionalLibraries.Add("BCrypt.lib");
+    }
 }

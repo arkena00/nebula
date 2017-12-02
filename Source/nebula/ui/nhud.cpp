@@ -9,10 +9,21 @@
 
 void Anhud::BeginPlay()
 {
-	bp_check(bp_main_);
+	bp_check(bp_game_ui_);
+	bp_check(bp_ship_ui_);
 
 	Aplayer_controller* pc = Cast<Aplayer_controller>(GetOwningPlayerController());
 
-	main_ = CreateWidget<Umain>(pc->GetWorld(), bp_main_);
-	main_->AddToViewport();
+	game_ui_ = CreateWidget<Umain>(pc->GetWorld(), bp_game_ui_);
+	game_ui_->AddToViewport();
 }
+
+void Anhud::ship_ui()
+{
+
+	Aplayer_controller* pc = Cast<Aplayer_controller>(GetOwningPlayerController());
+
+	ship_ui_ = CreateWidget<UUserWidget>(pc->GetWorld(), bp_ship_ui_);
+	ship_ui_->AddToViewport();
+}
+
