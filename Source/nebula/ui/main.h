@@ -10,6 +10,7 @@
 #include "Runtime/UMG/Public/Components/CanvasPanelSlot.h"
 #include "Runtime/UMG/Public/Components/NamedSlot.h"
 #include "Runtime/UMG/Public/Components/HorizontalBox.h"
+#include "Runtime/UMG/Public/Components/VerticalBox.h"
 
 #include "ui/nbutton.h"
 #include "main.generated.h"
@@ -22,8 +23,11 @@ class NEBULA_API Umain : public UUserWidget
 	virtual bool Initialize() override;
 
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "btn")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		TSubclassOf<Unbutton> bp_button_;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TSubclassOf<UUserWidget> bp_ship_item_;
 	
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 		UCanvasPanel* panel_ = nullptr;
@@ -35,6 +39,9 @@ protected:
 		UWidgetSwitcher* stack_menu_ = nullptr;
 
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
+		UVerticalBox* ships_ = nullptr;
+
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 		UNamedSlot* slot_quit_ = nullptr;
 	
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
@@ -42,4 +49,7 @@ protected:
 
 public:
 	UTextBlock* info();
+
+	UFUNCTION()
+		void ships_update();
 };

@@ -41,9 +41,22 @@ void Agame_mode::PreLogin(const FString & Options, const FString & Address, cons
 	UE_LOG(LogTemp, Warning, TEXT("PreLogin %s"), *id);
 }
 
-void Agame_mode::PostLogin(APlayerController* new_player)
+void Agame_mode::PostLogin(APlayerController* new_player_controller)
 {
-	Super::PostLogin(new_player);
+	Super::PostLogin(new_player_controller);
+	UE_LOG(LogTemp, Warning, TEXT("PostLogin"));
+
+	auto pc = Cast<Aplayer_controller>(new_player_controller);
+
+	FActorSpawnParameters param;
+	param.bNoFail = true;
+
+	Aship* a1 = GetWorld()->SpawnActor<Aship>(FVector(0, 0, 0), FRotator{ 0, 0, 0 }, param);
+	Aship* a2 = GetWorld()->SpawnActor<Aship>(FVector(5000, 5000, 0), FRotator{ 0, 0, 0 }, param);
+	pc->ship_add(a1);
+	pc->ship_add(a2);
+
+	pc->control(a1);
 
 }
 
@@ -51,6 +64,7 @@ FString Agame_mode::InitNewPlayer(APlayerController* new_player_controller, cons
 {
 	FString init = Super::InitNewPlayer(new_player_controller, UniqueId, Options, Portal);
 
+	UE_LOG(LogTemp, Warning, TEXT("InitNewPlayer"));
 	if (IsRunningDedicatedServer())
 	{
 		FString id = UGameplayStatics::ParseOption(Options, TEXT("id"));
@@ -64,18 +78,6 @@ FString Agame_mode::InitNewPlayer(APlayerController* new_player_controller, cons
 		pc->player_state->name_ = "ads00";
 
 		player_list_.Add(pc);
-
-
-		Aship* a1 = GetWorld()->SpawnActor<Aship>(FVector(0, 0, 0), FRotator{0, 0, 0});
-		Aship* a2 = GetWorld()->SpawnActor<Aship>(FVector(5000, 5000, 0), FRotator{ 90, 90, 90 });
-		pc->ship_add(a1);
-		pc->ship_add(a2);
-
-		pc->control(a1);
-		
-		nb_log("posses pawn");
-		pc->Possess(a2);
-		pc->SetViewTarget(a2);
 	}
 
 	return init;

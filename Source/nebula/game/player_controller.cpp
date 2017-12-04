@@ -15,7 +15,7 @@ void Aplayer_controller::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(Aplayer_controller, player_state);
-	DOREPLIFETIME(Aplayer_controller, ship_list_);
+	DOREPLIFETIME(Aplayer_controller, ships_);
 }
 
 void Aplayer_controller::BeginPlay()
@@ -43,21 +43,33 @@ void Aplayer_controller::control(Aship* ship)
 	client_on_control(ship);
 }
 
+void Aplayer_controller::control(int ship_id)
+{
+	if (ships_.IsValidIndex(ship_id)) control(ships_[ship_id]);
+}
 
 void Aplayer_controller::server_control_Implementation(int ship_id)
 {
-	control(ship_list_[ship_id]);
+	control(ships_[ship_id]);
 }
+bool Aplayer_controller::server_control_Validate(int ship_id) { return true; }
 
-bool Aplayer_controller::server_control_Validate(int ship_id)
+void Aplayer_controller::server_test_Implementation(int ship_id)
 {
-	return true;
+	Aship* a1 = GetWorld()->SpawnActor<Aship>(FVector(20000, 20000, 0), FRotator{ 0, 0, 0 });
+	ships_.Add(a1);
 }
+bool Aplayer_controller::server_test_Validate(int ship_id) { return true; }
 
 void Aplayer_controller::client_on_control_Implementation(Aship* p)
 {
 	if (GetHUD()) Cast<Anhud>(GetHUD())->ship_ui();
 	else nb_error("error");
+}
+
+void Aplayer_controller::client_on_ships_update_Implementation()
+{
+	event_ships_update.Broadcast();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -72,14 +84,10 @@ void Aplayer_controller::SetupInputComponent()
 
 void Aplayer_controller::input_test()
 {
-	if (ship_list_.IsValidIndex(0))
+	if (ships_.IsValidIndex(1))
 	{
-		server_control(0);
+		server_test(1);
 	}
-
-
-	//SetViewTarget(GetPawn());
-	//Astation* station = GetWorld()->SpawnActor<Astation>(Astation::StaticClass(), FVector(100, 100, 100), FRotator(0, 0, 0));
 }
 
 void Aplayer_controller::on_connect()
@@ -90,6 +98,17 @@ void Aplayer_controller::on_connect()
 
 void Aplayer_controller::ship_add(Aship* ship)
 {
-	ship_list_.Add(ship);
+	ships_.Add(ship);
+}
 
+void Aplayer_controller::on_ships_update()
+{
+	client_on_ships_update();
+}
+
+Anhud* Aplayer_controller::nhud()
+{
+	Anhud* hud = Cast<Anhud>(GetHUD());
+	if (!hud) nb_log("hud not found");
+	return hud;
 }

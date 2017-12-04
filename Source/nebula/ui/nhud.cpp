@@ -16,14 +16,20 @@ void Anhud::BeginPlay()
 
 	game_ui_ = CreateWidget<Umain>(pc->GetWorld(), bp_game_ui_);
 	game_ui_->AddToViewport();
+
+	ship_ui_ = CreateWidget<UUserWidget>(pc->GetWorld(), bp_ship_ui_);
+	ship_ui_->AddToViewport();
+	ship_ui_->SetVisibility(ESlateVisibility::Hidden);
+}
+
+Umain* Anhud::game_ui()
+{
+	return game_ui_;
 }
 
 void Anhud::ship_ui()
 {
-
-	Aplayer_controller* pc = Cast<Aplayer_controller>(GetOwningPlayerController());
-
-	ship_ui_ = CreateWidget<UUserWidget>(pc->GetWorld(), bp_ship_ui_);
-	ship_ui_->AddToViewport();
+	//if (ship_ui_) ship_ui_->SetVisibility(ESlateVisibility::Visible);
+	//else nb_error("er");
 }
 

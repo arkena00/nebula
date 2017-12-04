@@ -24,7 +24,7 @@ void Auniverse::star_add(float x, float y, float z)
 {
 	GetWorld()->SpawnActor<Astar>(FVector(x, y, z), FRotator(0, 0, 0));
 
-	UE_LOG(LogTemp, Display, TEXT("star : %f / %f"), x, y);
+	//UE_LOG(LogTemp, Display, TEXT("star : %f / %f"), x, y);
 }
 
 // Called when the game starts or when spawned
