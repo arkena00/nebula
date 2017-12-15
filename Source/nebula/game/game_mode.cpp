@@ -1,19 +1,24 @@
 // Fill out your copyright notice in the Description page of Project Settings.
-#include "game_mode.h"
+#include "game/game_mode.h"
 #include "player_controller.h"
-#include "player_state.h"
-#include "world/universe.h"
-#include "world/ship.h"
+
+#include "world/Auniverse.h"
+#include "world/Astar_system.h"
+#include "world/Aship.h"
+
 #include "log.h"
 #include "database.hpp"
 
-#include "Runtime/Engine/Classes/Engine/World.h"
-#include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
+
+#include "Engine/World.h"
+#include "Kismet/GameplayStatics.h"
 
 #include <ndb/initializer.hpp>
 #include <ndb/engine.hpp>
 #include <ndb/basic_engine.hpp>
 #include <ndb/engine/mongo/mongo.hpp>
+
+#include "world/Aship_object.h"
 
 Agame_mode::Agame_mode()
 {
@@ -21,6 +26,8 @@ Agame_mode::Agame_mode()
 	ndb::connect<dbs::alpha>();
 
 	nb_log("ndb init");
+
+
 }
 
 void Agame_mode::BeginPlay()
@@ -28,8 +35,15 @@ void Agame_mode::BeginPlay()
 	Super::BeginPlay();
 
 	nb_log("Agame_mode::BeginPlay()");
-	// spawn universe
-	//GetWorld()->SpawnActor<Auniverse>();
+
+
+		nb_log("spawn star_system");
+	//neb::star_system star_system_data;
+	//star_system_data.generate();
+
+	auto star_system = Cast<Astar_system>(UGameplayStatics::BeginDeferredActorSpawnFromClass(GetWorld(), Astar_system::StaticClass(), FTransform{}));
+	UGameplayStatics::FinishSpawningActor(star_system, FTransform{});
+
 
 }
 
@@ -49,15 +63,23 @@ void Agame_mode::PostLogin(APlayerController* new_player_controller)
 	auto pc = Cast<Aplayer_controller>(new_player_controller);
 
 	FActorSpawnParameters param;
-	param.bNoFail = true;
+	param.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
-	Aship* a1 = GetWorld()->SpawnActor<Aship>(FVector(0, 0, 0), FRotator{ 0, 0, 0 }, param);
-	Aship* a2 = GetWorld()->SpawnActor<Aship>(FVector(5000, 5000, 0), FRotator{ 0, 0, 0 }, param);
-	pc->ship_add(a1);
-	pc->ship_add(a2);
+	if (pc->id == 1)
+	{
+		Aship* a1 = GetWorld()->SpawnActor<Aship>(FVector(0, 0, 0), FRotator{ 0, 0, 0 }, param);
+		pc->ship_add(a1);
+	}
+	else
+	{
+		Aship* a2 = GetWorld()->SpawnActor<Aship>(FVector(5000, 5000, 0), FRotator{ 0, 0, 0 }, param);
+	
+		a2->object_add(Aship_object::ship_yard);
+		a2->object_add(Aship_object::reactor_solar);
 
-	pc->control(a1);
-
+		pc->ship_add(a2);
+	}
+	
 }
 
 FString Agame_mode::InitNewPlayer(APlayerController* new_player_controller, const FUniqueNetIdRepl& UniqueId, const FString& Options, const FString& Portal)
@@ -72,10 +94,6 @@ FString Agame_mode::InitNewPlayer(APlayerController* new_player_controller, cons
 
 		UE_LOG(LogTemp, Warning, TEXT("InitNewPlayer %s"), *id);
 
-		// create player state
-		pc->player_state = GetWorld()->SpawnActor<Aplayer_state>();
-		pc->player_state->SetOwner(pc);
-		pc->player_state->name_ = "ads00";
 
 		player_list_.Add(pc);
 	}

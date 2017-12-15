@@ -8,3 +8,4 @@
 #define nb_log(message) UE_LOG(LogTemp, Warning, TEXT(message))
 
 #define bp_check(pointer) if (pointer == nullptr) { UE_LOG(LogTemp, Error, TEXT("bp pointer missing")); UE_LOG(LogTemp, Error, TEXT(NB_LINE)); return; }
+#define bp_check_ret(pointer, ret) if (pointer == nullptr) { UE_LOG(LogTemp, Error, TEXT("bp pointer missing")); UE_LOG(LogTemp, Error, TEXT(NB_LINE)); return ret; }

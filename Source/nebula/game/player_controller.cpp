@@ -1,20 +1,22 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "player_controller.h"
-#include "player_state.h"
+#include "game/player_controller.h"
+
+#include "world/Aship.h"
+#include "world/Astar.h"
+
+#include "ui/Umain.h"
+#include "game/hud_main.h"
+#include "ui/Ulogin.h"
+
 #include "utility/http.h"
-#include "ui/nhud.h"
-#include "ui/login.h"
-#include "ui/main.h"
 #include "log.h"
-#include "world/ship.h"
 
 #include "UnrealNetwork.h"
 
 void Aplayer_controller::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME(Aplayer_controller, player_state);
 	DOREPLIFETIME(Aplayer_controller, ships_);
 }
 
@@ -32,6 +34,8 @@ void Aplayer_controller::BeginPlay()
 		nb_log("BeginPlay");
 		bShowMouseCursor = true;
 		SetInputMode(FInputModeGameAndUI{});
+
+		server_ship_control(0);
 	}
 }
 
@@ -39,8 +43,7 @@ void Aplayer_controller::BeginPlay()
 void Aplayer_controller::control(Aship* ship)
 {
 	Possess(ship);
-	SetViewTarget(ship);
-	client_on_control(ship);
+	client_ship_control(ship);
 }
 
 void Aplayer_controller::control(int ship_id)
@@ -48,26 +51,24 @@ void Aplayer_controller::control(int ship_id)
 	if (ships_.IsValidIndex(ship_id)) control(ships_[ship_id]);
 }
 
-void Aplayer_controller::server_control_Implementation(int ship_id)
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////           SERVER RPC           ////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+void Aplayer_controller::server_ship_control_Implementation(int ship_id)
 {
 	control(ships_[ship_id]);
 }
-bool Aplayer_controller::server_control_Validate(int ship_id) { return true; }
+bool Aplayer_controller::server_ship_control_Validate(int ship_id) { return true; }
 
-void Aplayer_controller::server_test_Implementation(int ship_id)
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////           CLIENT RPC           ////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+void Aplayer_controller::client_ship_control_Implementation(Aship* ship)
 {
-	Aship* a1 = GetWorld()->SpawnActor<Aship>(FVector(20000, 20000, 0), FRotator{ 0, 0, 0 });
-	ships_.Add(a1);
-}
-bool Aplayer_controller::server_test_Validate(int ship_id) { return true; }
-
-void Aplayer_controller::client_on_control_Implementation(Aship* p)
-{
-	if (GetHUD()) Cast<Anhud>(GetHUD())->ship_ui();
-	else nb_error("error");
+	event_ship_control.Broadcast(ship);
 }
 
-void Aplayer_controller::client_on_ships_update_Implementation()
+void Aplayer_controller::client_on_ships_update()
 {
 	event_ships_update.Broadcast();
 }
@@ -80,35 +81,35 @@ void Aplayer_controller::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 	InputComponent->BindAction("test", IE_Pressed, this, &Aplayer_controller::input_test);
+	//InputComponent->BindAction("test2", IE_Pressed, this, &Aplayer_controller::input_test2);
 }
 
 void Aplayer_controller::input_test()
 {
-	if (ships_.IsValidIndex(1))
-	{
-		server_test(1);
-	}
+	server_test(0);
 }
 
-void Aplayer_controller::on_connect()
-{
-	nb_log("connected");
-	//Cast<Anhud>(GetHUD())->mode_game();
-}
 
 void Aplayer_controller::ship_add(Aship* ship)
 {
 	ships_.Add(ship);
 }
 
-void Aplayer_controller::on_ships_update()
+
+
+void Aplayer_controller::log(FString data)
 {
-	client_on_ships_update();
+	event_info_update.Broadcast(data);
 }
 
-Anhud* Aplayer_controller::nhud()
+
+void Aplayer_controller::server_test_Implementation(int ship_id)
 {
-	Anhud* hud = Cast<Anhud>(GetHUD());
-	if (!hud) nb_log("hud not found");
-	return hud;
+	FActorSpawnParameters param;
+	param.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+	auto a1 = GetWorld()->SpawnActor<Aship>(FVector(20000, 20000, 0), FRotator{ 0, 0, 0 }, param);
+	a1->object_add(Aship_object::ship_yard);
+	nb_log("add ship");
+	ships_.Add(a1);
 }
+bool Aplayer_controller::server_test_Validate(int ship_id) { return true; }

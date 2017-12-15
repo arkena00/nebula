@@ -4,37 +4,52 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "Kismet/GameplayStatics.h"
 #include "player_controller.generated.h"
 
 UCLASS()
 class NEBULA_API Aplayer_controller : public APlayerController
 {
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE(Fevent_ships_update);
-
 	GENERATED_BODY()
 
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
 
+	// event
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(Fevent_info_update, FString, data);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(Fevent_ships_update);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(Fevent_ship_control, Aship*, ship);
+
 public:
+	UFUNCTION(BlueprintPure, Category = "Nebula")
+		TArray<class Aship*> ships() { return ships_; }
+
+	// event
+	UPROPERTY(BlueprintAssignable)
+		Fevent_info_update event_info_update;
+
+	UPROPERTY(BlueprintAssignable)
+		Fevent_ships_update event_ships_update;
+
+	UPROPERTY(BlueprintAssignable)
+		Fevent_ship_control event_ship_control;
+
+	// server rpc
 	UFUNCTION(Server, reliable, WithValidation)
 		void server_test(int ship_id);
 
-	UFUNCTION(Server, reliable, WithValidation, BlueprintCallable)
-		void server_control(int ship_id);
+	UFUNCTION(Server, reliable, WithValidation, BlueprintCallable, Category = "Nebula")
+		void server_ship_control(int ship_id);
 
+	// client rpc
 	UFUNCTION(Client, reliable)
-		void client_on_control(Aship* ship);
+		void client_ship_control(Aship* ship);
 
-	UFUNCTION(Client, reliable)
-		void client_on_ships_update();
-
+	// replicatation
 	UFUNCTION()
-		void on_connect();
-
-	Fevent_ships_update event_ships_update;
-
-	class Anhud* nhud();
+		void client_on_ships_update();
+	
+	void log(FString);
 
 	// input
 	void input_test();
@@ -45,14 +60,10 @@ public:
 
 	void ship_add(class Aship*);
 
-	UFUNCTION()
-		void on_ships_update();
-
-	// BP
-	UPROPERTY(Replicated)
-		class Aplayer_state* player_state = nullptr;
-
 public:
-	UPROPERTY(ReplicatedUsing = on_ships_update)
-	TArray<class Aship*> ships_;
+	int id = 0;
+
+private:
+	UPROPERTY(ReplicatedUsing = client_on_ships_update)
+		TArray<class Aship*> ships_;
 };
