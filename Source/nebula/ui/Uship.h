@@ -28,7 +28,7 @@ public:
 		TSubclassOf<class UUship_object> ui_ship_object;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		TSubclassOf<class UUship_yard> ui_ship_yard;
+		TSubclassOf<class UUshipyard> ui_shipyard;
 
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 		UWidgetSwitcher* stack_objects_ = nullptr;
@@ -42,9 +42,14 @@ public:
 	UFUNCTION()
 		void objects_update();
 
+public:
+	UUship(const FObjectInitializer& init);
 	void init(class Aship* ship);
 	
 private:
 	Aship* ship_ = nullptr;
 
+	class UClass* ui_button_ = nullptr;
+	class UClass* ui_ship_object_ = nullptr;
+	class UClass* ui_shipyard_ = nullptr;
 };

@@ -23,13 +23,6 @@ class NEBULA_API UUmain : public UUserWidget
 	virtual bool Initialize() override;
 
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		TSubclassOf<class UUbutton> ui_button;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		TSubclassOf<UUserWidget> ui_ship_item;
-
-
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 		UHorizontalBox* box_menu_ = nullptr;
 
@@ -38,14 +31,26 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 		UVerticalBox* ships_ = nullptr;
+
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
+		UNamedSlot* ship_ = nullptr;
 	
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 		UTextBlock* info_ = nullptr;
 
 public:
+	UUmain(const FObjectInitializer& init);
+
+	void ui_ship_set(class UUship*);
+
 	UFUNCTION()
 		void info_update(FString data);
-	
+
 	UFUNCTION()
 		void ships_update();
+
+private:
+	// ui
+	class UClass* ui_button_ = nullptr;
+	class UClass* ui_ship_item_ = nullptr;
 };

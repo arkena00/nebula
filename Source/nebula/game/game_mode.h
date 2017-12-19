@@ -16,11 +16,14 @@ protected:
 
 	virtual void PreLogin(const FString & Options, const FString & Address, const FUniqueNetIdRepl & UniqueId, FString & ErrorMessage) override;
 	virtual void PostLogin(APlayerController* NewPlayer) override;
+	virtual void Logout(AController* controller) override;
 
 	virtual FString InitNewPlayer(APlayerController* NewPlayerController, const FUniqueNetIdRepl& UniqueId, const FString& Options, const FString& Portal) override;
 
 private:
 	Agame_mode();
+
+	class AActor* universe_;
 
 	TArray<class Aplayer_controller*> player_list_;
 };

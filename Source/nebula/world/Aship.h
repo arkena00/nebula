@@ -37,7 +37,7 @@ public:
 	UFUNCTION(Server, Unreliable, WithValidation)
 		void server_move_direction(FRotator rotator);
 
-	void object_add(Aship_object::type_code);
+	void object_add(Eship_object_type);
 
 protected:
 	virtual void BeginPlay() override;

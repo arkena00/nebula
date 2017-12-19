@@ -2,7 +2,7 @@
 
 #include "world/Aship.h"
 #include "game/player_controller.h"
-#include "world/ship_object/Aship_yard.h"
+#include "world/ship_object/Ashipyard.h"
 #include "world/ship_object/Areactor_solar.h"
 #include "log.h"
 
@@ -218,17 +218,17 @@ void Aship::move_y(float n)
 	}
 }
 
-void Aship::object_add(Aship_object::type_code object_code)
+void Aship::object_add(Eship_object_type object_code)
 {
 	auto comp = NewObject<UChildActorComponent>(this);
 	
 	switch (object_code)
 	{
-	case Aship_object::ship_yard:
-		comp->SetChildActorClass(Aship_yard::StaticClass());
+	case Eship_object_type::shipyard:
+		comp->SetChildActorClass(Ashipyard::StaticClass());
 		break;
 
-	case Aship_object::reactor_solar:
+	case Eship_object_type::reactor_solar:
 		comp->SetChildActorClass(Areactor_solar::StaticClass());
 		break;
 
@@ -240,6 +240,7 @@ void Aship::object_add(Aship_object::type_code object_code)
 	comp->RegisterComponent();
 
 	Aship_object* o = Cast<Aship_object>(comp->GetChildActor());
+	o->SetOwner(this);
 	
 	objects_.Add(o);
 }

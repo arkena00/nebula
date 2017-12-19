@@ -96,6 +96,11 @@ void Aplayer_controller::ship_add(Aship* ship)
 }
 
 
+void Aplayer_controller::PawnLeavingGame()
+{
+
+}
+
 
 void Aplayer_controller::log(FString data)
 {
@@ -108,7 +113,7 @@ void Aplayer_controller::server_test_Implementation(int ship_id)
 	FActorSpawnParameters param;
 	param.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 	auto a1 = GetWorld()->SpawnActor<Aship>(FVector(20000, 20000, 0), FRotator{ 0, 0, 0 }, param);
-	a1->object_add(Aship_object::ship_yard);
+	a1->object_add(Eship_object_type::shipyard);
 	nb_log("add ship");
 	ships_.Add(a1);
 }

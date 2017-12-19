@@ -45,7 +45,7 @@ public:
 	UFUNCTION(Client, reliable)
 		void client_ship_control(Aship* ship);
 
-	// replicatation
+	// on replicatation
 	UFUNCTION()
 		void client_on_ships_update();
 	
@@ -60,10 +60,12 @@ public:
 
 	void ship_add(class Aship*);
 
+	void PawnLeavingGame() override;
+
 public:
 	int id = 0;
 
-private:
+public:
 	UPROPERTY(ReplicatedUsing = client_on_ships_update)
 		TArray<class Aship*> ships_;
 };

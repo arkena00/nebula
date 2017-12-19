@@ -2,6 +2,8 @@
 
 #include "ui/Umain.h"
 #include "ui/Ubutton.h"
+#include "ui/Uship.h"
+
 #include "game/player_controller.h"
 #include "log.h"
 
@@ -9,23 +11,31 @@
 #include "Blueprint/WidgetTree.h"
 #include "GenericPlatform/GenericPlatformMisc.h"
 
+#include "UObject/ConstructorHelpers.h"
+
 #include <string>
 #include <vector>
 
-std::vector<std::string> menu_list{ "Ship", "Construction", "Research" };
+std::vector<std::string> menu_list{ "Current ship", "Ship", "Construction", "Research" };
+
+UUmain::UUmain(const FObjectInitializer& init) : Super(init)
+{
+	ui_ship_item_ = ConstructorHelpers::FObjectFinder<UClass>(TEXT("WidgetBlueprint'/Game/nebula/ui/ui_ship_item.ui_ship_item_C'")).Object;
+	ui_button_ = ConstructorHelpers::FObjectFinder<UClass>(TEXT("WidgetBlueprint'/Game/nebula/ui/ui_button.ui_button_C'")).Object;
+}
 
 bool UUmain::Initialize()
 {
 	auto status = Super::Initialize();
 
-	bp_check_ret(ui_button, status);
+	bp_check_ret(ui_button_, status);
 
 	stack_menu_->SetVisibility(ESlateVisibility::Hidden);
 	
 	// menu button
 	for (int i = 0; i != menu_list.size(); i++)
 	{
-		auto btn = CreateWidget<UUbutton>(GetWorld(), ui_button);
+		auto btn = CreateWidget<UUbutton>(GetWorld(), ui_button_);
 		btn->on_click([this, i]()
 		{
 			// swap visibility if index is the same
@@ -74,9 +84,9 @@ void UUmain::ships_update()
 		int i = 0;
 		for (auto ship : pc->ships())
 		{
-			auto ship_item = CreateWidget<UUserWidget>(GetWorld(), ui_ship_item);
+			auto ship_item = CreateWidget<UUserWidget>(GetWorld(), ui_ship_item_);
 
-			auto btn = CreateWidget<UUbutton>(GetWorld(), ui_button);
+			auto btn = CreateWidget<UUbutton>(GetWorld(), ui_button_);
 			btn->text()->SetText(FText::FromString(FString("Take control")));
 			btn->on_click([i, this]()
 			{
@@ -90,4 +100,8 @@ void UUmain::ships_update()
 	
 }
 
-
+void UUmain::ui_ship_set(class UUship* ui_ship)
+{
+	ship_->ClearChildren();
+	ship_->AddChild(ui_ship);
+}

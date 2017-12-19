@@ -7,26 +7,16 @@
 #include "world/Aship.h"
 
 #include "log.h"
-#include "database.hpp"
-
 
 #include "Engine/World.h"
 #include "Kismet/GameplayStatics.h"
 
-#include <ndb/initializer.hpp>
-#include <ndb/engine.hpp>
-#include <ndb/basic_engine.hpp>
-#include <ndb/engine/mongo/mongo.hpp>
+
 
 #include "world/Aship_object.h"
 
 Agame_mode::Agame_mode()
 {
-	ndb::initializer<ndb::mongo> init;
-	ndb::connect<dbs::alpha>();
-
-	nb_log("ndb init");
-
 
 }
 
@@ -42,7 +32,7 @@ void Agame_mode::BeginPlay()
 	//star_system_data.generate();
 
 	auto star_system = Cast<Astar_system>(UGameplayStatics::BeginDeferredActorSpawnFromClass(GetWorld(), Astar_system::StaticClass(), FTransform{}));
-	UGameplayStatics::FinishSpawningActor(star_system, FTransform{});
+	universe_ = UGameplayStatics::FinishSpawningActor(star_system, FTransform{});
 
 
 }
@@ -74,8 +64,8 @@ void Agame_mode::PostLogin(APlayerController* new_player_controller)
 	{
 		Aship* a2 = GetWorld()->SpawnActor<Aship>(FVector(5000, 5000, 0), FRotator{ 0, 0, 0 }, param);
 	
-		a2->object_add(Aship_object::ship_yard);
-		a2->object_add(Aship_object::reactor_solar);
+		a2->object_add(Eship_object_type::shipyard);
+		a2->object_add(Eship_object_type::reactor_solar);
 
 		pc->ship_add(a2);
 	}
@@ -89,14 +79,24 @@ FString Agame_mode::InitNewPlayer(APlayerController* new_player_controller, cons
 	UE_LOG(LogTemp, Warning, TEXT("InitNewPlayer"));
 	if (IsRunningDedicatedServer())
 	{
-		FString id = UGameplayStatics::ParseOption(Options, TEXT("id"));
+		FString str_id = UGameplayStatics::ParseOption(Options, TEXT("id"));
+		
 		auto pc = Cast<Aplayer_controller>(new_player_controller);
+		pc->id = FCString::Atoi(*str_id);
 
-		UE_LOG(LogTemp, Warning, TEXT("InitNewPlayer %s"), *id);
+		UE_LOG(LogTemp, Warning, TEXT("InitNewPlayer %d"), pc->id);
 
 
 		player_list_.Add(pc);
 	}
 
 	return init;
+}
+
+
+void Agame_mode::Logout(AController* controller)
+{
+	auto pc = Cast<Aplayer_controller>(controller);
+
+	UE_LOG(LogTemp, Warning, TEXT("Logout %d"), pc->id);
 }

@@ -2,13 +2,21 @@
 
 #include "ui/Uship.h"
 #include "ui/Uship_object.h"
-#include "ui/ship_object/Uship_yard.h"
+#include "ui/ship_object/Ushipyard.h"
 #include "ui/Ubutton.h"
 
 #include "world/Aship.h"
-#include "world/ship_object/Aship_yard.h"
+#include "world/ship_object/Ashipyard.h"
 
+#include "UObject/ConstructorHelpers.h"
 #include "log.h"
+
+UUship::UUship(const FObjectInitializer& init) : Super(init)
+{
+	ui_ship_object_ = ConstructorHelpers::FObjectFinder<UClass>(TEXT("WidgetBlueprint'/Game/nebula/ui/ui_ship_object.ui_ship_object_C'")).Object;
+	ui_shipyard_ = ConstructorHelpers::FObjectFinder<UClass>(TEXT("WidgetBlueprint'/Game/nebula/ui/ui_shipyard.ui_shipyard_C'")).Object;
+	ui_button_ = ConstructorHelpers::FObjectFinder<UClass>(TEXT("WidgetBlueprint'/Game/nebula/ui/ui_button.ui_button_C'")).Object;
+}
 
 bool UUship::Initialize()
 {
@@ -26,17 +34,13 @@ void UUship::init(Aship* ship)
 	// bind event_objects_update
 	ship->event_objects_update.AddDynamic(this, &UUship::objects_update);
 
-	name_->SetText(FText::FromString("The Setsunaf"));
+	name_->SetText(FText::FromString("Ark Station"));
 
 	objects_update();
 }
 
 void UUship::objects_update()
 {
-	bp_check(ui_button);
-	bp_check(ui_ship_object);
-	bp_check(ui_ship_yard);
-
 	objects_->ClearChildren();
 
 	for (auto object : ship_->objects())
@@ -47,19 +51,19 @@ void UUship::objects_update()
 
 			switch (object->type())
 			{
-			case Aship_object::ship_yard:
-				ui_object = CreateWidget<UUship_yard>(GetWorld(), ui_ship_yard);
+			case Eship_object_type::shipyard:
+				ui_object = CreateWidget<UUshipyard>(GetWorld(), ui_shipyard_);
 				break;
 
 			default:
-				ui_object = CreateWidget<UUship_object>(GetWorld(), ui_ship_object);
+				ui_object = CreateWidget<UUship_object>(GetWorld(), ui_ship_object_);
 			}
 
 			ui_object->init(object);
 
-
 			stack_objects_->AddChild(ui_object);
 			
+			// add object button
 			auto btn = CreateWidget<UUbutton>(GetWorld(), ui_button);
 			btn->on_click([ui_object, this]()
 			{

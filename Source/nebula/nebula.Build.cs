@@ -14,6 +14,12 @@ public class nebula : ModuleRules
         // ndb
         string ndb_path = "C:/Projet/nk/ndb";
 
+        // sqlite
+        PublicIncludePaths.Add(ndb_path + "/include");
+        PublicAdditionalLibraries.Add(ndb_path + "/extlib/lib/sqlite3.lib");
+
+        /*
+        // mongo
         PublicIncludePaths.Add(ndb_path + "/include");
         PublicIncludePaths.Add(ndb_path + "/extlib/include/libmongoc-1.0");
         PublicIncludePaths.Add(ndb_path + "/extlib/include/libbson-1.0");
@@ -24,5 +30,6 @@ public class nebula : ModuleRules
         PublicAdditionalLibraries.Add("Secur32.lib");
         PublicAdditionalLibraries.Add("Crypt32.lib");
         PublicAdditionalLibraries.Add("BCrypt.lib");
+        */
     }
 }

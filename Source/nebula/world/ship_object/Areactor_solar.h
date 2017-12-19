@@ -18,7 +18,7 @@ class NEBULA_API Areactor_solar : public Aship_object
 	virtual int eps() const { return 80; }
 	
 	FString name() const override { return "reactor_solar"; }
-	type_code type() const override { return Aship_object::reactor_solar; }
+	Eship_object_type type() const override { return Eship_object_type::reactor_solar; }
 	
 public:
 	Areactor_solar();

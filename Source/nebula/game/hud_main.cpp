@@ -26,6 +26,7 @@ void Ahud_main::BeginPlay()
 
 	ui_main_ = CreateWidget<UUmain>(GetWorld(), ui_main);
 	ui_main_->AddToViewport();
+	
 }
 
 void Ahud_main::ship_control(Aship* ship)
@@ -34,5 +35,5 @@ void Ahud_main::ship_control(Aship* ship)
 	if (IsValid(ui_ship_)) ui_ship_->RemoveFromViewport();
 	ui_ship_ = CreateWidget<UUship>(GetWorld(), ui_ship);
 	ui_ship_->init(ship);
-	ui_ship_->AddToViewport();
+	ui_main_->ui_ship_set(ui_ship_);
 }

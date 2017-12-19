@@ -2,11 +2,8 @@
 
 #include "Aship_object.h"
 
-
-// Sets default values
 Aship_object::Aship_object()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 }
@@ -24,4 +21,3 @@ void Aship_object::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 }
-

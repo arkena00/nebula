@@ -7,6 +7,25 @@
 
 class Ugame_instance;
 
+//shipyard : ship_object_builder
+//techno_center : ship_object_builder : ship_object
+
+UENUM()
+enum class Eship_object_type : uint8
+{
+	shipyard,
+	research_center,
+	techno_center,
+	reactor_solar,
+	drill,
+	propulsion,
+	scanner
+};
+
+// shipyard
+// research center
+// technology center
+
 namespace neb
 {
 	class game;
@@ -19,12 +38,16 @@ namespace neb
 
 	struct ship_object
 	{
-		int id;
+		Eship_object_type id;
 		std::string name;
 		int build_time;
 
 		static std::vector<ship_object> get();
+		static ship_object get(Eship_object_type t);
 	};
+
+
+
 
 	class game
 	{

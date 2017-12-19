@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Components/TextBlock.h"
 #include "Components/NamedSlot.h"
+#include "Components/ProgressBar.h"
 
 #include "world/Aship_object.h"
 #include "ui/Ubutton.h"
@@ -21,26 +22,23 @@ class NEBULA_API UUship_object : public UUserWidget
 	GENERATED_BODY()
 	
 protected:
-	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
-		UTextBlock* info_ = nullptr;
-
-	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
-		UNamedSlot* action_ = nullptr;
+	
 	
 public:
 	virtual void init(Aship_object* object)
 	{
 		FString info;
+		/*
 		info += "Default description";
 		info += "\nBuild time : " + FString::FromInt(object->build_time());
-		info += "\nEnergy / s : " + FString::FromInt(object->eps());
+		info += "\nEnergy / s : " + FString::FromInt(object->eps());*/
 
 		description_set(info);
 	}
 
 	void action_set(UUbutton* action)
 	{
-		action_->SetContent(action);
+		//action_->SetContent(action);
 	}
 
 	void description_set(FString value)
@@ -50,6 +48,6 @@ public:
 
 	void description_set(FText value)
 	{
-		if (info_) info_->SetText(value);
+		//if (info_) info_->SetText(value);
 	}
 };
